@@ -21,7 +21,8 @@ namespace Lab1
         private void button1_Click(object sender, EventArgs e)
         {
             int numa, numb;
-            long GTa=1, GTb=1, S1=0, S2=0, S3=0;
+            long GTa = 1, GTb = 1, S1 = 1, S2 = 1;
+            double S3=0;
             if(Int32.TryParse(textA.Text, out numa) && Int32.TryParse(textB.Text, out numb))
             {
                 for(int i=1;i<=numa;i++)
@@ -35,6 +36,14 @@ namespace Lab1
 
                 for (int i = 1; i <= numb; i++)
                     S2 = S2 + i;
+
+                for(int i=1; i<=numb; i++)
+                {
+                    S3 = S3 + Math.Pow(numa, i);
+                }
+
+                textBox1.Text = GTa.ToString();//"A! = ";// + GTa.ToString()+ "B! = "+ GTb.ToString();
+
 
                 
             }
