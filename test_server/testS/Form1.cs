@@ -3,6 +3,7 @@ using System.Text;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace testS
 {
@@ -42,6 +43,27 @@ namespace testS
             ));
            
             listener.Stop();
+
+            bool flag = true;
+            while(flag)
+            {
+                DirectoryInfo info = new DirectoryInfo("C:\\Users\\ADMIN\\Music");
+                TreeNode rootNode = PopulateTreeView(info);
+                
+                NetworkStream ns = client.GetStream();
+                BinaryFormatter bf = new BinaryFormatter();
+               
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    bf.Serialize(ms, rootNode);
+                    byte[] bytes = ms.ToArray();
+                    ns.Write(bytes, 0, bytes.Length);
+                }
+                ns.Close();
+                flag = false;
+            }
+
+
             try
             {
                 while (client.Connected)
@@ -139,9 +161,51 @@ namespace testS
                 btListen.Enabled = true;
             }
             ));
-            
+            messageCurrent.Invoke(new MethodInvoker(delegate ()
+            {
+                messageCurrent.Text = "Close connection";
+            }
+                    ));
             nwStream.Close();
        
+        }
+
+
+/// <summary>
+/// ///////////////////////////////////////////////////
+/// </summary>
+        private TreeNode PopulateTreeView(DirectoryInfo info)
+        {
+            TreeNode rootNode= new TreeNode(info.Name) ;
+
+            if (info.Exists)
+            {
+                rootNode = new TreeNode(info.Name);
+                rootNode.Tag = info;
+                rootNode.Name = "C:\\Users\\ADMIN\\Music";
+                GetDirectories(info.GetDirectories(), rootNode);
+               
+            }
+            return rootNode;
+        }
+
+        private void GetDirectories(DirectoryInfo[] subDirs,
+            TreeNode nodeToAddTo)
+        {
+            TreeNode aNode;
+            DirectoryInfo[] subSubDirs;
+            foreach (DirectoryInfo subDir in subDirs)
+            {
+                aNode = new TreeNode(subDir.Name, 0, 0);
+                aNode.Tag = subDir;
+                aNode.ImageKey = "folder";
+                subSubDirs = subDir.GetDirectories();
+                if (subSubDirs.Length != 0)
+                {
+                    GetDirectories(subSubDirs, aNode);
+                }
+                nodeToAddTo.Nodes.Add(aNode);
+            }
         }
     }
 }
