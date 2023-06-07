@@ -28,6 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(client));
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.treeView1 = new System.Windows.Forms.TreeView();
             this.messageCurrent = new System.Windows.Forms.Label();
@@ -39,6 +41,8 @@
             this.btConnect = new System.Windows.Forms.Button();
             this.tbPath = new System.Windows.Forms.TextBox();
             this.btSend = new System.Windows.Forms.Button();
+            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
+            this.label3 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -53,6 +57,7 @@
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.label3);
             this.splitContainer1.Panel1.Controls.Add(this.treeView1);
             // 
             // splitContainer1.Panel2
@@ -72,9 +77,9 @@
             // 
             // treeView1
             // 
-            this.treeView1.Location = new System.Drawing.Point(12, 12);
+            this.treeView1.Location = new System.Drawing.Point(12, 37);
             this.treeView1.Name = "treeView1";
-            this.treeView1.Size = new System.Drawing.Size(218, 426);
+            this.treeView1.Size = new System.Drawing.Size(218, 401);
             this.treeView1.TabIndex = 0;
             // 
             // messageCurrent
@@ -159,6 +164,23 @@
             this.btSend.UseVisualStyleBackColor = true;
             this.btSend.Click += new System.EventHandler(this.btSend_Click);
             // 
+            // imageList1
+            // 
+            this.imageList1.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
+            this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
+            this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
+            this.imageList1.Images.SetKeyName(0, "folder.png");
+            this.imageList1.Images.SetKeyName(1, "file-download.png");
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(68, 9);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(96, 20);
+            this.label3.TabIndex = 1;
+            this.label3.Text = "File TreeView";
+            // 
             // client
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
@@ -169,6 +191,7 @@
             this.Text = "client";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.client_FormClosing);
             this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel1.PerformLayout();
             this.splitContainer1.Panel2.ResumeLayout(false);
             this.splitContainer1.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
@@ -190,5 +213,7 @@
         private Label label1;
         private Label messageCurrent;
         private TreeView treeView1;
+        private ImageList imageList1;
+        private Label label3;
     }
 }

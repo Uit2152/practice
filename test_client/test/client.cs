@@ -1,4 +1,4 @@
-using System.Net;
+﻿using System.Net;
 using System.Net.Sockets;
 using Client;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -22,11 +22,12 @@ namespace test
             InitializeComponent();
         }
 
+        //nút kết nối với server
         private void btConnect_Click(object sender, EventArgs e)
         {
             btConnect.Enabled = false;
             Form formServer = new ConnectToServer();
-
+//Hiển thị form nhập server IP address
             if (formServer.ShowDialog() == DialogResult.Cancel)
             {
                 if (ipServer == "")
@@ -34,29 +35,33 @@ namespace test
                     MessageBox.Show("Enter server IP address!");
                     throw new Exception("Enter server IP address!");
                 }
+//thực hiện kết nối tới server có IP đã nhập
                 client_server = new TcpClient();
                 try
                 {
                     client_server.Connect(IPAddress.Parse(ipServer), 51000);
                     swSender = new StreamWriter(client_server.GetStream());
-                    //  receiver = new Thread(new ThreadStart(startClient));
-                    //  receiver.Start();
+//Tạo treeview                  
+                    while(!PopulateTreeView())
+                    {
 
-                    PopulateTreeView();
+                    }
+//Tạo luồng nhận thông điệp
+                     
+//sự kiện click chuột vào 1 node của tree view
                     this.treeView1.NodeMouseClick += new TreeNodeMouseClickEventHandler(this.treeView1_NodeMouseClick);
 
-                    MessageBox.Show("connect successfully");
-                    messageCurrent.Text = "Connecting...";
-                    btDisconnect.Enabled = true;
-                    btConnect.Enabled = false;
+                        MessageBox.Show("connect successfully");
+                        messageCurrent.Text = "Connecting...";
+                        btDisconnect.Enabled = true;
+                        btConnect.Enabled = false;
 
-                   
-
-
-
+                    receiver = new Thread(new ThreadStart(startClient));
+                    receiver.Start();
                 }
                 catch (Exception)
                 {
+//đóng kết nối nếu có lỗi xảy ra
                     client_server.Close();
                     MessageBox.Show("connect unsuccessfully");
                     btConnect.Enabled = true;
@@ -67,18 +72,19 @@ namespace test
             }
 
         }
-
+// bắt đầu luồng nhận thông điệp
         void startClient()
         {
             string fileName, fileSize;
             nwStream = client_server.GetStream();
+            nwStream.Flush();
             srReceiver = new StreamReader(nwStream);
 
             try
             {
                 while (client_server.Connected)
                 {
-
+//Đọc thông tin(kích thước, tên) của file mà client muốn server gửi
                     String fileInfo = srReceiver.ReadLine();
 
                     messageCurrent.Invoke(new MethodInvoker(delegate ()
@@ -93,6 +99,7 @@ namespace test
                     fileSize = mess[2];
                     savePath += "\\" + fileName.Trim();
 
+//thực hiện nhận và lưu file mà server gửi
                     using (var output = File.Create(savePath))
                     {
 
@@ -123,11 +130,9 @@ namespace test
 
             }
 
-
-
-
-
         }
+
+//thực hiện ngắt kết nối client-server
         private void btDisconnect_Click(object sender, EventArgs e)
         {
             Thread.Sleep(100);
@@ -143,29 +148,25 @@ namespace test
             btDisconnect.Enabled = false;
             btSend.Enabled = false;
         }
-
+//Gửi đường dẫn của file mà client muốn tải về
         private void btSend_Click(object sender, EventArgs e)
         {
 
             if (tbPath.Text != "" && tbSavePath.Text != "")
             {
-
-
                 swSender.WriteLine(tbPath.Text.ToString().Trim());
                 swSender.Flush();
-
-
 
             }
             else
             {
                 btSend.Enabled = false;
             }
-            tbPath.Text = "";
+         
 
         }
 
-
+//chọn nơi lưu file 
         private void btSave_Click(object sender, EventArgs e)
         {
             FolderBrowserDialog fbd = new FolderBrowserDialog();
@@ -178,7 +179,7 @@ namespace test
             }
         }
 
-
+//xử lý sự kiện đóng form khi vẫn còn giữ kết nối server-client
         private void client_FormClosing(object sender, EventArgs e)
         {
             if (client_server.Connected)
@@ -187,73 +188,54 @@ namespace test
                 swSender.Flush();
                 swSender.Close();
                 client_server.Close();
-                nwStream.Close();
+              
                 srReceiver.Close();
             }
-
         }
 
 
-
-
-        ///////////////
-        ///
-        private void PopulateTreeView()
+// Tạo fileTree     
+        private bool PopulateTreeView()
         {
             TreeNode receivedData;
-
+//nhận treenode từ server
             using (MemoryStream ms = new MemoryStream())
             {
-                nwStream = client_server.GetStream();
-                byte[] buffer = new byte[2048];
-                int i = nwStream.Read(buffer, 0, buffer.Length);
-                nwStream.Flush();
+                NetworkStream Stream;
+                Stream= client_server.GetStream();
+            
+                byte[] buffer = new byte[10240*1024];
+               int i = Stream.Read(buffer, 0, buffer.Length);
+            
                 ms.Write(buffer, 0, buffer.Length);
+
                 ms.Seek(0, SeekOrigin.Begin);
                 BinaryFormatter bf = new BinaryFormatter();
 
               receivedData = (TreeNode)bf.Deserialize(ms);
-
+                Stream.Flush();
+               
 
             }
+//tạo treeview từ treenode mà server gửi
             TreeNode rootNode;
             rootNode = receivedData;
             treeView1.Nodes.Add(rootNode);
-            tbPath.Text = rootNode.Name;
+           
+            return true;
         }
-            void GetDirectories(DirectoryInfo[] subDirs,
-                TreeNode nodeToAddTo)
-            {
-                TreeNode aNode;
-                DirectoryInfo[] subSubDirs;
-                foreach (DirectoryInfo subDir in subDirs)
-                {
-                    aNode = new TreeNode(subDir.Name, 0, 0);
-                    aNode.Tag = subDir;
-                    aNode.ImageKey = "folder";
-                    subSubDirs = subDir.GetDirectories();
-                    if (subSubDirs.Length != 0)
-                    {
-                        GetDirectories(subSubDirs, aNode);
-                    }
-                    nodeToAddTo.Nodes.Add(aNode);
-                }
-            }
+           
 
+
+//Xử lý sự kiện click chuột vào 1 node của treeview
         void treeView1_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
-
-            TreeNode newSelected = e.Node;
-        
-            DirectoryInfo nodeDirInfo = (DirectoryInfo)newSelected.Tag;
-
-
-
-            tbPath.Text =newSelected.Name.ToString();
-
-
+ // hiển thị fullPath của file lên tbPath
+            if (e.Node.ImageKey == "file")
+            tbPath.Text = e.Node.Parent.Name + "\\" + e.Node.Text;
 
         }
 
+      
     }
 }
