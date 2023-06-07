@@ -41,15 +41,18 @@ namespace test
                 {
                     client_server.Connect(IPAddress.Parse(ipServer), 51000);
                     swSender = new StreamWriter(client_server.GetStream());
-//Tạo treeview                  
-                    while(!PopulateTreeView())
-                    {
 
-                    }
+////Tạo treeview                  
+//                    while(!PopulateTreeView())
+//                    {
+
+//                    }
+
+
 //Tạo luồng nhận thông điệp
                      
 //sự kiện click chuột vào 1 node của tree view
-                    this.treeView1.NodeMouseClick += new TreeNodeMouseClickEventHandler(this.treeView1_NodeMouseClick);
+ //                   this.treeView1.NodeMouseClick += new TreeNodeMouseClickEventHandler(this.treeView1_NodeMouseClick);
 
                         MessageBox.Show("connect successfully");
                         messageCurrent.Text = "Connecting...";

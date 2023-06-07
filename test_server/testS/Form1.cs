@@ -48,27 +48,27 @@ namespace testS
            
             listener.Stop();
 
-//server sẽ gửi file tree của 1 thư mục mà server chọn cho client
-            bool flag = true;
-            while(flag)
-            {
-                DirectoryInfo info = new DirectoryInfo(downloadPath);
-//Tạo file tree với rootNode là thư mục đã chọn
-                TreeNode rootNode = PopulateTreeView(info);
+////server sẽ gửi file tree của 1 thư mục mà server chọn cho client
+//            bool flag = true;
+//            while(flag)
+//            {
+//                DirectoryInfo info = new DirectoryInfo(downloadPath);
+////Tạo file tree với rootNode là thư mục đã chọn
+//                TreeNode rootNode = PopulateTreeView(info);
                 
-                NetworkStream ns = client.GetStream();
-                BinaryFormatter bf = new BinaryFormatter();
- //gửi file tree cho client              
-                using (MemoryStream ms = new MemoryStream())
-                {
-                    bf.Serialize(ms, rootNode);
-                    byte[] bytes = ms.ToArray();
+//                NetworkStream ns = client.GetStream();
+//                BinaryFormatter bf = new BinaryFormatter();
+// //gửi file tree cho client              
+//                using (MemoryStream ms = new MemoryStream())
+//                {
+//                    bf.Serialize(ms, rootNode);
+//                    byte[] bytes = ms.ToArray();
                   
-                    ns.Write(bytes, 0, bytes.Length);
-                }
-                ns.Close();
-                flag = false;
-            }
+//                    ns.Write(bytes, 0, bytes.Length);
+//                }
+//                ns.Close();
+//                flag = false;
+//            }
 
             try
             {
