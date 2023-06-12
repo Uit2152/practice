@@ -32,6 +32,9 @@ namespace testS
     //Thông báo quá trình xử lý của server
             messageCurrent.Text = "Listening...";
             btListen.Enabled = false;
+            btPath.Enabled = false;
+            btPath.BackColor = SystemColors.GrayText;
+            btListen.BackColor = SystemColors.GrayText;
 
         }
 
@@ -80,7 +83,7 @@ namespace testS
                          ));
 
                         closeConnect();
-                        btListen.Enabled = true;
+                       
                         break;
                     }
 
@@ -160,6 +163,9 @@ namespace testS
             btListen.Invoke(new MethodInvoker(delegate ()
             {
                 btListen.Enabled = true;
+                btPath.Enabled = true;
+                btPath.BackColor = System.Drawing.Color.LightBlue; ;
+                btListen.BackColor = System.Drawing.Color.LightBlue; ;
             }
             ));
             messageCurrent.Invoke(new MethodInvoker(delegate ()
@@ -178,7 +184,8 @@ namespace testS
     //server sẽ gửi file tree của 1 thư mục mà server chọn cho client
             String[] folderPath = downloadPath.Split("||");
             DirectoryInfo info = new DirectoryInfo(folderPath[0]);
-    //Tạo file tree với rootNode là thư mục đã chọn
+    //Tạo file tree với rootNode tên Root 
+    //Các node con của rootNode chính là các thư mục đã chọn
             TreeNode rootNode = new TreeNode("Root");
             rootNode.Nodes.Add(PopulateTreeView(info));
 
@@ -208,11 +215,13 @@ namespace testS
 
             if (info.Exists)
             {
+        //rootNode là thư mục đã chọn
                 rootNode = new TreeNode(info.Name,0,0);
                 rootNode.Tag = info;
-        ////////Xem lại chỗ này  -> chình lại cho đường dẫn file bên client  đúng
+       
                 rootNode.Name = info.FullName;
                 rootNode.ImageKey = "folder";
+        //khởi tạo các node con là các file chỉ chứa trong thư mục đã chọn, không xét các file nằm trong thư mục con của thư mục đã chọn
                 getFile(info.GetDirectories(), rootNode);
             }
             return rootNode;
@@ -243,7 +252,7 @@ namespace testS
             {
                 downloadPath +=   fbd.SelectedPath +"||";
                 tbPath.Text += fbd.SelectedPath +"\r\n";
-               // downloadPath = downloadPath.Replace("\\", "\\\\");
+              
 
             }
         }

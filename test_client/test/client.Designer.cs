@@ -148,6 +148,7 @@
             // 
             // tbSavePath
             // 
+            this.tbSavePath.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.tbSavePath.Location = new System.Drawing.Point(54, 368);
             this.tbSavePath.Name = "tbSavePath";
             this.tbSavePath.Size = new System.Drawing.Size(309, 27);
@@ -180,6 +181,7 @@
             // 
             // tbPath
             // 
+            this.tbPath.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.tbPath.Location = new System.Drawing.Point(28, 97);
             this.tbPath.Name = "tbPath";
             this.tbPath.Size = new System.Drawing.Size(309, 27);

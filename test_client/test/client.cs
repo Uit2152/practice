@@ -38,8 +38,8 @@ namespace test
                     MessageBox.Show("Enter server IP address!");
                     
                 }
-                //if(ipServer != previousIpServer)
-                //    this.treeView1.Nodes.Clear();
+                client_server = new TcpClient();
+                this.treeView1.Nodes.Clear();
 
 //thực hiện kết nối tới server có IP đã nhập
               
@@ -54,7 +54,8 @@ namespace test
                     {
 
                     }
-                    //sự kiện click chuột vào 1 node của tree view
+            
+             //sự kiện click chuột vào 1 node của tree view
                     this.treeView1.NodeMouseClick += new TreeNodeMouseClickEventHandler(this.treeView1_NodeMouseClick);
 
                     MessageBox.Show("connect successfully");
@@ -83,9 +84,6 @@ namespace test
         void startClient()
         {
             string fileName, fileSize;
-            //nwStream = client_server.GetStream();
-            //nwStream.Flush();
-            //srReceiver = new StreamReader(nwStream);
             nwStream = client_server.GetStream();
             nwStream.Flush();
 
@@ -93,7 +91,7 @@ namespace test
             {
                 while (client_server.Connected )
                 {
-//Đọc thông tin(kích thước, tên) của file mà client muốn server gửi
+            //Đọc thông tin(kích thước, tên) của file mà client muốn server gửi
                     
                     String fileInfo = srReceiver.ReadLine();
 
@@ -109,7 +107,7 @@ namespace test
                     fileSize = mess[2];
                     savePath += "\\" + fileName.Trim();
 
-//thực hiện nhận và lưu file mà server gửi
+            //thực hiện nhận và lưu file mà server gửi
                     using (var output = File.Create(savePath))
                     {
 
@@ -119,15 +117,12 @@ namespace test
 
                         output.Write(buffer, 0, Int32.Parse(fileSize));
 
-                      
-
                     }
-                    //MessageBox.Show("ok");
+            //MessageBox.Show("ok");
                     savePath = savePath.Substring(0, savePath.Length - fileName.Length - 1);
                     fileName = "";
                     fileSize = "";
 
-                  
                     nwStream.Flush();
 
                     messageCurrent.Invoke(new MethodInvoker(delegate ()
@@ -211,10 +206,11 @@ namespace test
 // Tạo fileTree     
         private bool PopulateTreeView()
         {
+    //Kiểm tra xem có cần tạo treeview không
             if(srReceiver.ReadLine() == "NotTree")
                 return true;
             TreeNode receivedData;
-//nhận treenode từ server
+    //Nhận treenode từ server
             using (MemoryStream ms = new MemoryStream())
             {
 
@@ -228,12 +224,12 @@ namespace test
                 ms.Seek(0, SeekOrigin.Begin);
                 BinaryFormatter bf = new BinaryFormatter();
 
-              receivedData = (TreeNode)bf.Deserialize(ms);
+                receivedData = (TreeNode)bf.Deserialize(ms);
                 Stream.Flush();
                
 
             }
-//tạo treeview từ treenode mà server gửi
+    //Tạo treeview từ treenode mà server gửi
             TreeNode rootNode;
             rootNode = receivedData;
             treeView1.Nodes.Add(rootNode);
