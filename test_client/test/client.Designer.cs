@@ -31,7 +31,9 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(client));
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.label3 = new System.Windows.Forms.Label();
             this.treeView1 = new System.Windows.Forms.TreeView();
+            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.messageCurrent = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
@@ -41,8 +43,6 @@
             this.btConnect = new System.Windows.Forms.Button();
             this.tbPath = new System.Windows.Forms.TextBox();
             this.btSend = new System.Windows.Forms.Button();
-            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
-            this.label3 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -71,16 +71,40 @@
             this.splitContainer1.Panel2.Controls.Add(this.btConnect);
             this.splitContainer1.Panel2.Controls.Add(this.tbPath);
             this.splitContainer1.Panel2.Controls.Add(this.btSend);
+            this.splitContainer1.Panel2.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.splitContainer1.Panel2.ForeColor = System.Drawing.Color.Green;
             this.splitContainer1.Size = new System.Drawing.Size(800, 450);
             this.splitContainer1.SplitterDistance = 233;
             this.splitContainer1.TabIndex = 0;
             // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label3.ForeColor = System.Drawing.SystemColors.MenuHighlight;
+            this.label3.Location = new System.Drawing.Point(68, 9);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(101, 20);
+            this.label3.TabIndex = 1;
+            this.label3.Text = "File TreeView";
+            // 
             // treeView1
             // 
+            this.treeView1.ImageIndex = 0;
+            this.treeView1.ImageList = this.imageList1;
             this.treeView1.Location = new System.Drawing.Point(12, 37);
             this.treeView1.Name = "treeView1";
+            this.treeView1.SelectedImageIndex = 0;
             this.treeView1.Size = new System.Drawing.Size(218, 401);
             this.treeView1.TabIndex = 0;
+            // 
+            // imageList1
+            // 
+            this.imageList1.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
+            this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
+            this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
+            this.imageList1.Images.SetKeyName(0, "folder.png");
+            this.imageList1.Images.SetKeyName(1, "file-download.png");
             // 
             // messageCurrent
             // 
@@ -93,29 +117,33 @@
             // label2
             // 
             this.label2.AutoSize = true;
+            this.label2.ForeColor = System.Drawing.Color.DimGray;
             this.label2.Location = new System.Drawing.Point(119, 330);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(165, 20);
+            this.label2.Size = new System.Drawing.Size(172, 20);
             this.label2.TabIndex = 6;
             this.label2.Text = "Select the save location";
             // 
             // label1
             // 
             this.label1.AutoSize = true;
+            this.label1.ForeColor = System.Drawing.Color.DimGray;
             this.label1.Location = new System.Drawing.Point(119, 57);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(127, 20);
+            this.label1.Size = new System.Drawing.Size(135, 20);
             this.label1.TabIndex = 5;
             this.label1.Text = "Enter the file path";
             // 
             // btSave
             // 
+            this.btSave.BackColor = System.Drawing.Color.White;
+            this.btSave.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(64)))), ((int)(((byte)(0)))));
             this.btSave.Location = new System.Drawing.Point(457, 366);
             this.btSave.Name = "btSave";
             this.btSave.Size = new System.Drawing.Size(94, 29);
             this.btSave.TabIndex = 4;
-            this.btSave.Text = "Save";
-            this.btSave.UseVisualStyleBackColor = true;
+            this.btSave.Text = "Browse";
+            this.btSave.UseVisualStyleBackColor = false;
             this.btSave.Click += new System.EventHandler(this.btSave_Click);
             // 
             // tbSavePath
@@ -127,23 +155,27 @@
             // 
             // btDisconnect
             // 
+            this.btDisconnect.BackColor = System.Drawing.Color.White;
             this.btDisconnect.Enabled = false;
+            this.btDisconnect.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(128)))), ((int)(((byte)(255)))));
             this.btDisconnect.Location = new System.Drawing.Point(457, 171);
             this.btDisconnect.Name = "btDisconnect";
             this.btDisconnect.Size = new System.Drawing.Size(94, 29);
             this.btDisconnect.TabIndex = 2;
             this.btDisconnect.Text = "Disconnect";
-            this.btDisconnect.UseVisualStyleBackColor = true;
+            this.btDisconnect.UseVisualStyleBackColor = false;
             this.btDisconnect.Click += new System.EventHandler(this.btDisconnect_Click);
             // 
             // btConnect
             // 
+            this.btConnect.BackColor = System.Drawing.Color.White;
+            this.btConnect.ForeColor = System.Drawing.Color.Green;
             this.btConnect.Location = new System.Drawing.Point(457, 37);
             this.btConnect.Name = "btConnect";
             this.btConnect.Size = new System.Drawing.Size(94, 29);
             this.btConnect.TabIndex = 2;
             this.btConnect.Text = "Connect";
-            this.btConnect.UseVisualStyleBackColor = true;
+            this.btConnect.UseVisualStyleBackColor = false;
             this.btConnect.Click += new System.EventHandler(this.btConnect_Click);
             // 
             // tbPath
@@ -155,31 +187,16 @@
             // 
             // btSend
             // 
+            this.btSend.BackColor = System.Drawing.Color.White;
             this.btSend.Enabled = false;
+            this.btSend.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(0)))));
             this.btSend.Location = new System.Drawing.Point(457, 95);
             this.btSend.Name = "btSend";
             this.btSend.Size = new System.Drawing.Size(94, 29);
             this.btSend.TabIndex = 0;
-            this.btSend.Text = "Send";
-            this.btSend.UseVisualStyleBackColor = true;
+            this.btSend.Text = "Get File";
+            this.btSend.UseVisualStyleBackColor = false;
             this.btSend.Click += new System.EventHandler(this.btSend_Click);
-            // 
-            // imageList1
-            // 
-            this.imageList1.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
-            this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
-            this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
-            this.imageList1.Images.SetKeyName(0, "folder.png");
-            this.imageList1.Images.SetKeyName(1, "file-download.png");
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(68, 9);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(96, 20);
-            this.label3.TabIndex = 1;
-            this.label3.Text = "File TreeView";
             // 
             // client
             // 

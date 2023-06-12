@@ -46,18 +46,21 @@
             // 
             // btListen
             // 
+            this.btListen.BackColor = System.Drawing.Color.LightBlue;
             this.btListen.Location = new System.Drawing.Point(450, 35);
             this.btListen.Name = "btListen";
             this.btListen.Size = new System.Drawing.Size(94, 29);
             this.btListen.TabIndex = 1;
             this.btListen.Text = "Listen";
-            this.btListen.UseVisualStyleBackColor = true;
+            this.btListen.UseVisualStyleBackColor = false;
             this.btListen.Click += new System.EventHandler(this.btListen_Click);
             // 
             // notice_board
             // 
+            this.notice_board.BackColor = System.Drawing.Color.White;
             this.notice_board.Location = new System.Drawing.Point(12, 23);
             this.notice_board.Name = "notice_board";
+            this.notice_board.ReadOnly = true;
             this.notice_board.Size = new System.Drawing.Size(361, 302);
             this.notice_board.TabIndex = 2;
             this.notice_board.Text = "";
@@ -65,25 +68,29 @@
             // tbPath
             // 
             this.tbPath.Location = new System.Drawing.Point(12, 402);
+            this.tbPath.Multiline = true;
             this.tbPath.Name = "tbPath";
+            this.tbPath.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.tbPath.Size = new System.Drawing.Size(361, 27);
             this.tbPath.TabIndex = 3;
             // 
             // btPath
             // 
             this.btPath.AllowDrop = true;
+            this.btPath.BackColor = System.Drawing.Color.LightBlue;
             this.btPath.Location = new System.Drawing.Point(456, 383);
             this.btPath.Name = "btPath";
             this.btPath.Size = new System.Drawing.Size(88, 55);
             this.btPath.TabIndex = 4;
-            this.btPath.Text = "DownloadPath";
-            this.btPath.UseVisualStyleBackColor = true;
+            this.btPath.Text = "Shared File";
+            this.btPath.UseVisualStyleBackColor = false;
             this.btPath.Click += new System.EventHandler(this.btPath_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.ClientSize = new System.Drawing.Size(602, 450);
             this.Controls.Add(this.btPath);
             this.Controls.Add(this.tbPath);

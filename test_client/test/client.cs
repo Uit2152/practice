@@ -13,52 +13,56 @@ namespace test
         private StreamWriter swSender;
         private StreamReader srReceiver;
         private NetworkStream nwStream;
-        private TcpClient client_server;
+        private TcpClient client_server = new TcpClient();
         private Thread receiver;
         private String savePath;
         public static String ipServer = "";
+
         public client()
         {
             InitializeComponent();
         }
 
-        //nút kết nối với server
+//nút kết nối với server
         private void btConnect_Click(object sender, EventArgs e)
         {
             btConnect.Enabled = false;
             Form formServer = new ConnectToServer();
+            String previousIpServer = ipServer;
+           
 //Hiển thị form nhập server IP address
             if (formServer.ShowDialog() == DialogResult.Cancel)
             {
                 if (ipServer == "")
                 {
                     MessageBox.Show("Enter server IP address!");
-                    throw new Exception("Enter server IP address!");
+                    
                 }
+                //if(ipServer != previousIpServer)
+                //    this.treeView1.Nodes.Clear();
+
 //thực hiện kết nối tới server có IP đã nhập
-                client_server = new TcpClient();
+              
                 try
                 {
                     client_server.Connect(IPAddress.Parse(ipServer), 51000);
                     swSender = new StreamWriter(client_server.GetStream());
+                    srReceiver = new StreamReader(client_server.GetStream());
 
-////Tạo treeview                  
-//                    while(!PopulateTreeView())
-//                    {
+                    // Tạo treeview
+                    while (!PopulateTreeView())
+                    {
 
-//                    }
+                    }
+                    //sự kiện click chuột vào 1 node của tree view
+                    this.treeView1.NodeMouseClick += new TreeNodeMouseClickEventHandler(this.treeView1_NodeMouseClick);
 
-
-//Tạo luồng nhận thông điệp
-                     
-//sự kiện click chuột vào 1 node của tree view
- //                   this.treeView1.NodeMouseClick += new TreeNodeMouseClickEventHandler(this.treeView1_NodeMouseClick);
-
-                        MessageBox.Show("connect successfully");
+                    MessageBox.Show("connect successfully");
                         messageCurrent.Text = "Connecting...";
                         btDisconnect.Enabled = true;
                         btConnect.Enabled = false;
 
+//Tạo luồng nhận thông điệp
                     receiver = new Thread(new ThreadStart(startClient));
                     receiver.Start();
                 }
@@ -79,15 +83,18 @@ namespace test
         void startClient()
         {
             string fileName, fileSize;
+            //nwStream = client_server.GetStream();
+            //nwStream.Flush();
+            //srReceiver = new StreamReader(nwStream);
             nwStream = client_server.GetStream();
             nwStream.Flush();
-            srReceiver = new StreamReader(nwStream);
 
             try
             {
-                while (client_server.Connected)
+                while (client_server.Connected )
                 {
 //Đọc thông tin(kích thước, tên) của file mà client muốn server gửi
+                    
                     String fileInfo = srReceiver.ReadLine();
 
                     messageCurrent.Invoke(new MethodInvoker(delegate ()
@@ -96,8 +103,8 @@ namespace test
                     }
                     ));
 
-                    String[] mess = fileInfo.Split('#');
-
+                    String[] mess = fileInfo.Split('|');
+                   
                     fileName = mess[1];
                     fileSize = mess[2];
                     savePath += "\\" + fileName.Trim();
@@ -112,19 +119,22 @@ namespace test
 
                         output.Write(buffer, 0, Int32.Parse(fileSize));
 
-                        //MessageBox.Show("ok");
-
-                        fileName = "";
-                        fileSize = "";
-                        nwStream.Flush();
-
-                        messageCurrent.Invoke(new MethodInvoker(delegate ()
-                        {
-                            messageCurrent.Text = "Read file.";
-                        }
-                  ));
+                      
 
                     }
+                    //MessageBox.Show("ok");
+                    savePath = savePath.Substring(0, savePath.Length - fileName.Length - 1);
+                    fileName = "";
+                    fileSize = "";
+
+                  
+                    nwStream.Flush();
+
+                    messageCurrent.Invoke(new MethodInvoker(delegate ()
+                    {
+                        messageCurrent.Text = "Read file.";
+                    }
+                    ));
                 }
             }
             catch (Exception ex)
@@ -138,7 +148,7 @@ namespace test
 //thực hiện ngắt kết nối client-server
         private void btDisconnect_Click(object sender, EventArgs e)
         {
-            Thread.Sleep(100);
+          // Thread.Sleep(100);
             swSender.WriteLine("EXIT");
             swSender.Flush();
             swSender.Close();
@@ -164,6 +174,7 @@ namespace test
             else
             {
                 btSend.Enabled = false;
+                MessageBox.Show("Enter the file path OR Select the save location ");
             }
          
 
@@ -177,7 +188,7 @@ namespace test
             {
                 savePath = fbd.SelectedPath;
                 tbSavePath.Text = savePath;
-                savePath = savePath.Replace("\\", "\\\\");
+              
                 btSend.Enabled = true;
             }
         }
@@ -200,13 +211,15 @@ namespace test
 // Tạo fileTree     
         private bool PopulateTreeView()
         {
+            if(srReceiver.ReadLine() == "NotTree")
+                return true;
             TreeNode receivedData;
 //nhận treenode từ server
             using (MemoryStream ms = new MemoryStream())
             {
+
                 NetworkStream Stream;
                 Stream= client_server.GetStream();
-            
                 byte[] buffer = new byte[10240*1024];
                int i = Stream.Read(buffer, 0, buffer.Length);
             

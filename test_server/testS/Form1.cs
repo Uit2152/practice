@@ -9,7 +9,7 @@ namespace testS
 {
     public partial class Form1 : Form
     {
-        private String downloadPath;
+        private String downloadPath="";
 
         private NetworkStream nwStream;
         private Thread serverThread;
@@ -20,7 +20,7 @@ namespace testS
             InitializeComponent();
         }
 
-        //Nút bắt đầu quá trình lắng nghe của server
+//Nút bắt đầu quá trình lắng nghe của server
         private void btListen_Click(object sender, EventArgs e)
         {
             Int32 port = 51000;
@@ -29,66 +29,56 @@ namespace testS
             serverThread = new Thread(new ThreadStart(StartServer));
             serverThread.Start();
 
-            //Thông báo quá trình xử lý của server
+    //Thông báo quá trình xử lý của server
             messageCurrent.Text = "Listening...";
             btListen.Enabled = false;
 
         }
 
-        //Luồng thực hiện quá trình trao đổi giữa server và client
+//Luồng thực hiện quá trình trao đổi giữa server và client
         void StartServer()
         {
             client = listener.AcceptTcpClient();
-            
+            nwStream = client.GetStream();
+            var swClient = new StreamWriter(nwStream);
+            var srClient = new StreamReader(nwStream);
+
             messageCurrent.Invoke(new MethodInvoker(delegate ()
             {
                 messageCurrent.Text = "Connecting...";
             }
             ));
-           
+
             listener.Stop();
 
-////server sẽ gửi file tree của 1 thư mục mà server chọn cho client
-//            bool flag = true;
-//            while(flag)
-//            {
-//                DirectoryInfo info = new DirectoryInfo(downloadPath);
-////Tạo file tree với rootNode là thư mục đã chọn
-//                TreeNode rootNode = PopulateTreeView(info);
+            if (downloadPath != "")
+            {
+                swClient.WriteLine("Tree");
+                swClient.Flush();
+                sendFileTree();
+            }
+            else
+            {
+                swClient.WriteLine("NotTree");
                 
-//                NetworkStream ns = client.GetStream();
-//                BinaryFormatter bf = new BinaryFormatter();
-// //gửi file tree cho client              
-//                using (MemoryStream ms = new MemoryStream())
-//                {
-//                    bf.Serialize(ms, rootNode);
-//                    byte[] bytes = ms.ToArray();
-                  
-//                    ns.Write(bytes, 0, bytes.Length);
-//                }
-//                ns.Close();
-//                flag = false;
-//            }
+            }
+            swClient.Flush();
+            nwStream.Flush();
 
             try
             {
-//thực hiện nhận yêu cầu từ client
+        //thực hiện nhận yêu cầu từ client
                 while (client.Connected)
                 {
-                    nwStream = client.GetStream();
-                    var srClient = new StreamReader(nwStream);
-                   
-
                     String filePath = srClient.ReadLine();
                     if (filePath == "EXIT")
-
                     {
                         messageCurrent.Invoke(new MethodInvoker(delegate ()
                         {
                             messageCurrent.Text = "Closing connection...";
                         }
                          ));
-                        
+
                         closeConnect();
                         btListen.Enabled = true;
                         break;
@@ -98,14 +88,14 @@ namespace testS
                     {
                         messageCurrent.Text = "Reading filePath...";
                     }
-                    )); 
- //Lấy thông tin(kích thước và tên) của file mà server yêu cầu                
+                    ));
+            //Lấy thông tin(kích thước và tên) của file mà server yêu cầu                
                     FileInfo fileInfo = new FileInfo(filePath);
                     long fileSize = fileInfo.Length;
                     String fileName = fileInfo.Name;
-                    String infoData = ("#"+fileName + "#" + fileSize.ToString()); 
+                    String infoData = ("|" + fileName + "|" + fileSize.ToString());
 
-//hiển thị fullPath của file mà client yêu cầu lên bảng Notice_board của server
+            //hiển thị fullPath của file mà client yêu cầu lên bảng Notice_board của server
                     notice_board.Invoke(new MethodInvoker(delegate ()
                     {
                         notice_board.Text += "\r\nFrom client: " + filePath;
@@ -117,17 +107,19 @@ namespace testS
                         messageCurrent.Text = "Sending file...";
                     }
                     ));
- //Gửi thông tin(kích thước file và tên file) của file mà client yêu cầu cho server                
-                    var swClient = new StreamWriter(nwStream);
+          
+            //Gửi thông tin(kích thước file và tên file) của file mà client yêu cầu cho server                
+            //var swClient = new StreamWriter(nwStream);
+
                     swClient.WriteLine(infoData);
                     swClient.Flush();
 
-//Gửi file mà client yêu cầu cho server 
+            //Gửi file mà client yêu cầu cho server (không gửi dc file zip)
+   
                     FileStream file = new FileStream(filePath, FileMode.Open, FileAccess.Read);
                     file.CopyTo(nwStream);
                     byte[] package = new byte[file.Length];
                     nwStream.Write(package, 0, ((int)file.Length));
-
 
                     nwStream.Flush();
                     swClient.Flush();
@@ -137,23 +129,24 @@ namespace testS
                         messageCurrent.Text = "File was sent.";
                     }
                     ));
-                  
-
                 }
             }
             catch (Exception ex)
             {
-//Thông báo lỗi xảy ra
+        //Thông báo lỗi xảy ra
                 MessageBox.Show(ex.Message);
-//Đóng hết kết nối nếu đã thực hiện thành công việc kết nối server-client
+        //Đóng hết kết nối nếu đã thực hiện thành công việc kết nối server-client
                 if (client != null)
-
                 {
                     listener.Stop();
                     client.Close();
-                    btListen.Enabled = true;
+                   btListen.Invoke(new MethodInvoker(delegate ()
+                    {
+                        btListen.Enabled = true;
+                    }
+                    ));  
                 }
-              
+
             }
 
         }
@@ -173,54 +166,85 @@ namespace testS
             {
                 messageCurrent.Text = "Close connection";
             }
-                    ));
+            ));
             nwStream.Close();
-       
+
         }
 
+//Phương thức gửi file tree
+        private void sendFileTree()
+        {
+
+    //server sẽ gửi file tree của 1 thư mục mà server chọn cho client
+            String[] folderPath = downloadPath.Split("||");
+            DirectoryInfo info = new DirectoryInfo(folderPath[0]);
+    //Tạo file tree với rootNode là thư mục đã chọn
+            TreeNode rootNode = new TreeNode("Root");
+            rootNode.Nodes.Add(PopulateTreeView(info));
+
+            for (int i = 1; i < folderPath.Length-1; i++)
+            {
+                rootNode.Nodes.Add(PopulateTreeView(new DirectoryInfo(folderPath[i])));
+            }
+
+            NetworkStream ns = client.GetStream();
+                BinaryFormatter bf = new BinaryFormatter();
+    //gửi file tree cho client              
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    bf.Serialize(ms, rootNode);
+                    byte[] bytes = ms.ToArray();
+
+                    ns.Write(bytes, 0, bytes.Length);
+                }
+                ns.Flush();
+               
+           
+        }
 //Phương thức tạo fileTree 
         private TreeNode PopulateTreeView(DirectoryInfo info)
         {
-            TreeNode rootNode= new TreeNode(info.Name) ;
+            TreeNode rootNode = new TreeNode(info.Name);
 
             if (info.Exists)
             {
-                rootNode = new TreeNode(info.Name);
+                rootNode = new TreeNode(info.Name,0,0);
                 rootNode.Tag = info;
-                rootNode.Name =downloadPath;
+        ////////Xem lại chỗ này  -> chình lại cho đường dẫn file bên client  đúng
+                rootNode.Name = info.FullName;
                 rootNode.ImageKey = "folder";
-                GetFile(info.GetDirectories(), rootNode);
+                getFile(info.GetDirectories(), rootNode);
             }
             return rootNode;
         }
 
- 
+
 //Tạo các node đại diện cho file có trong thư mục được đại diện bởi rootnode của fileTree
-        private void GetFile(DirectoryInfo[] subDirs,TreeNode nodeToAddTo)
+        private void getFile(DirectoryInfo[] subDirs, TreeNode nodeToAddTo)
         {
             TreeNode aNode;
-            DirectoryInfo nodeDirInfo= (DirectoryInfo) nodeToAddTo.Tag;
+            DirectoryInfo nodeDirInfo = (DirectoryInfo)nodeToAddTo.Tag;
 
             foreach (FileInfo file in nodeDirInfo.GetFiles())
             {
                 aNode = new TreeNode(file.Name, 1, 1);
-           
+
                 aNode.ImageKey = "file";
-               
+
                 nodeToAddTo.Nodes.Add(aNode);
             }
         }
 
-        //chọn thư mục để tạo fileTree rồi sau đó gửi cho client
+//chọn thư mục để tạo fileTree rồi sau đó gửi cho client
         private void btPath_Click(object sender, EventArgs e)
         {
             FolderBrowserDialog fbd = new FolderBrowserDialog();
             if (fbd.ShowDialog() == DialogResult.OK)
             {
-                downloadPath = fbd.SelectedPath;
-                tbPath.Text = downloadPath;
-                downloadPath = downloadPath.Replace("\\", "\\\\");
-              
+                downloadPath +=   fbd.SelectedPath +"||";
+                tbPath.Text += fbd.SelectedPath +"\r\n";
+               // downloadPath = downloadPath.Replace("\\", "\\\\");
+
             }
         }
     }

@@ -34,7 +34,7 @@
             // 
             // btConnect
             // 
-            this.btConnect.Location = new System.Drawing.Point(70, 100);
+            this.btConnect.Location = new System.Drawing.Point(98, 100);
             this.btConnect.Name = "btConnect";
             this.btConnect.Size = new System.Drawing.Size(94, 29);
             this.btConnect.TabIndex = 0;
@@ -44,7 +44,7 @@
             // 
             // tbIPServer
             // 
-            this.tbIPServer.Location = new System.Drawing.Point(12, 51);
+            this.tbIPServer.Location = new System.Drawing.Point(32, 51);
             this.tbIPServer.Name = "tbIPServer";
             this.tbIPServer.Size = new System.Drawing.Size(217, 27);
             this.tbIPServer.TabIndex = 1;
@@ -53,7 +53,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(241, 187);
+            this.ClientSize = new System.Drawing.Size(291, 189);
             this.Controls.Add(this.tbIPServer);
             this.Controls.Add(this.btConnect);
             this.Name = "ConnectToServer";
